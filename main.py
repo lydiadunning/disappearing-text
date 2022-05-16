@@ -3,27 +3,31 @@ from tkinter import Tk, Text
 
 class Timer:
     def __init__(self):
-        self.active_timer = None
-        self.delete_timer = None
-        self.time_in_ms = 5000
+        self.gray_timer = None
+        self.deletion_timer = None
+        self.ms_until_delete = 5000
+        self.ms_until_gray = 2000
 
     def start(self, *args):
-        if self.active_timer:
+        if self.gray_timer:
             text_box.config(fg='black')
-            window.after_cancel(self.active_timer)
-            window.after_cancel(self.delete_timer)
-        self.active_timer = window.after(2000, self.count_down)
-        self.delete_timer = window.after(self.time_in_ms, self.delete_everything)
+            window.after_cancel(self.gray_timer)
+            window.after_cancel(self.deletion_timer)
+        self.gray_timer = window.after(self.ms_until_gray, self.count_down)
+        self.deletion_timer = window.after(self.ms_until_delete, self.delete_text)
 
     def count_down(self, count=3, grey_num=20):
+        gray_increment_ms = 1000
         if count > 0:
             text_box.config(fg=f'grey{grey_num}')
-            self.active_timer = window.after(1000, self.count_down, count-1, grey_num*2)
+            self.gray_timer = window.after(gray_increment_ms, self.count_down, count - 1, grey_num * 2)
 
-    def delete_everything(self):
-        text_box.delete(1.0, "end")
+    def delete_text(self):
+        text_box.delete(1.0, 'end')
+        window.after_cancel(self.gray_timer)
+        window.after_cancel(self.deletion_timer)
         text_box.config(fg='black')
-        self.active_timer = None
+        self.gray_timer = None
 
 
 timer = Timer()
